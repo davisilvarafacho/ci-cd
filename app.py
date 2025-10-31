@@ -21,7 +21,7 @@ def docs():
 
 @app.route("/sales")
 def sales():
-    return "Sales Page"
+    return "Sales Page2ssss"
 
 
 @app.route("/products")
