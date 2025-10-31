@@ -19,5 +19,10 @@ def docs():
     return "Documentation Page"
 
 
+@app.route("/sales")
+def sales():
+    return "Sales Page"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
