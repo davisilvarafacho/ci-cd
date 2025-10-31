@@ -14,5 +14,10 @@ def version():
     return "Version 1.0"
 
 
+@app.route("/docs")
+def docs():
+    return "Documentation Page"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
