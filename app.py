@@ -16,7 +16,7 @@ def version():
 
 @app.route("/docs")
 def docs():
-    return "Documentation Page"
+    return "Documentation Page 2"
 
 
 if __name__ == '__main__':
