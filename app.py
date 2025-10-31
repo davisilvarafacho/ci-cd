@@ -31,7 +31,7 @@ def products():
 
 @app.route("/settings")
 def settings():
-    return "Settings Page"
+    return "Settings Page 2"
 
 
 if __name__ == "__main__":
