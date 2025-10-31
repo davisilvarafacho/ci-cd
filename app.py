@@ -4,9 +4,9 @@ import flask
 app = flask.Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def home():
-    return 'Hello, World!'
+    return "Hello, World!"
 
 
 @app.route("/version")
@@ -19,5 +19,20 @@ def docs():
     return "Documentation Page"
 
 
-if __name__ == '__main__':
+@app.route("/sales")
+def sales():
+    return "Sales Page"
+
+
+@app.route("/products")
+def products():
+    return "Products Page"
+
+
+@app.route("/settings")
+def settings():
+    return "Settings Page 2"
+
+
+if __name__ == "__main__":
     app.run(debug=True)
