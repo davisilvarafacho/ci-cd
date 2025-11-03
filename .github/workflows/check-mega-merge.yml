@@ -2,6 +2,7 @@ name: Check Mega Branch Merge
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
