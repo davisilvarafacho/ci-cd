@@ -26,7 +26,7 @@ def sales():
 
 @app.route("/products")
 def products():
-    return "New Products Page"
+    return "New Products Page 4"
 
 
 if __name__ == '__main__':
