@@ -28,10 +28,6 @@ def sales():
 def products():
     return "Products Page"
 
-@app.route("/products")
-def products2():
-    return "Products Page"
-
 
 if __name__ == '__main__':
     app.run(debug=True)
