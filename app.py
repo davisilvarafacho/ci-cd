@@ -29,5 +29,10 @@ def products():
     return "New Products Page 4"
 
 
+@app.route("/maladeza")
+def maladeza():
+    return "Maladeza Page"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
