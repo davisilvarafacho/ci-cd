@@ -1,0 +1,30 @@
+name: Check Mega Branch Merge
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-mega:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Check if PR commits are merged into mega
+        run: |
+          # Verifica se os commits do PR já existem na branch mega
+          PR_COMMITS=$(git log origin/main..HEAD --format="%H")
+          
+          for commit in $PR_COMMITS; do
+            if ! git branch -r --contains $commit | grep -q "origin/mega"; then
+              echo "❌ Commit $commit não está na branch mega ainda"
+              echo "Por favor, faça merge para mega primeiro!"
+              exit 1
+            fi
+          done
+          
+          echo "✅ Todos os commits já passaram por mega"
