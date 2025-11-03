@@ -4,20 +4,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        type: choice
-        options:
-          - dev
-          - staging
-          - production
-      message:
-        description: 'Custom message for the run'
-        required: false
-        type: string
+
 
 jobs:
   check-mega:
