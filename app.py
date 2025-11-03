@@ -19,6 +19,10 @@ def docs():
     return "Documentation Page"
 
 
+@app.route("/global_tables")
+def global_tables():
+    return "Global Tables Page"
+
 @app.route("/sales")
 def sales():
     return "Sales Page2ssss"
