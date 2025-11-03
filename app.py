@@ -31,7 +31,7 @@ def products():
 
 @app.route("/maladeza")
 def maladeza():
-    return "Maladeza Page"
+    return "Maladeza 2 Page"
 
 
 if __name__ == '__main__':
