@@ -33,7 +33,6 @@ def ui():
 def products():
     return "Products Page"
 
-
 @app.route("/products")
 def products2():
     return "Products Page"
