@@ -11,7 +11,7 @@ def home():
 
 @app.route("/version")
 def version():
-    return "Version 1.0"
+    return "Version 1.1"
 
 
 @app.route("/docs")
