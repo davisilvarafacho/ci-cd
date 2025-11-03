@@ -7,8 +7,8 @@
 - [ ] Homogação
 - [ ] Produção
 
-### Pull Request de Desenvolvimento
-<!-- Link do PR para a branch mega -->
+### Link do PR para a MEGA
+
 
 ### Quem validou que estava funcionando?
 - [ ] Alécio
