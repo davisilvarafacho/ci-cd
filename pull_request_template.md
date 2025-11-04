@@ -1,16 +1,18 @@
-## Pull Request
-
-### Link do Callzin
-<!-- Link do chamado -->
+### Breve descrição da alteração
 
 ### Ambiente
+
 - [ ] Homogação
 - [ ] Produção
 
-### Link do PR para a MEGA
+### Código do Callzin
+<!-- Link ou ID do chamado -->
 
+### PR para a MEGA
+<!-- Link ou ID do chamado -->
 
 ### Quem validou que estava funcionando?
+
 - [ ] Alécio
 - [ ] Érika
 - [ ] Rafael
