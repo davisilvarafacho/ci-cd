@@ -1,4 +1,4 @@
-name: Validate feature→main commits are in mega
+name: check-mega
 
 on:
   pull_request:
@@ -6,10 +6,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  check-commits-present-in-mega:
-    name: Ensure PR commits are already in mega
-    # Só aplica para PRs cujo branch de origem começa com feature/
-    if: startsWith(github.head_ref, 'feature/')
+  check-mega:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,7 +20,22 @@ jobs:
       TOKEN: ${{ github.token }}
 
     steps:
+      # Guard: sempre roda o job, mas decide se as próximas etapas devem rodar
+      - name: Guard (run only for feature/* PRs)
+        id: guard
+        run: |
+          set -euo pipefail
+          ref="${{ github.head_ref }}"
+          if [[ "$ref" =~ ^feature/ ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "PR de feature: $ref"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "PR não é feature/* (head_ref=$ref). Check passará sem validações."
+          fi
+
       - name: Checkout PR head (full history)
+        if: steps.guard.outputs.run == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ env.HEAD_SHA }}
@@ -31,33 +43,33 @@ jobs:
           persist-credentials: false
 
       - name: Fetch base (main) and mega
+        if: steps.guard.outputs.run == 'true'
         run: |
           set -euo pipefail
           git fetch --no-tags origin "${BASE_REF}":"refs/remotes/origin/${BASE_REF}"
           git fetch --no-tags origin "${MEGA_BRANCH}":"refs/remotes/origin/${MEGA_BRANCH}"
 
-      # (Opcional porém recomendado) Garante que o repo não permita squash/rebase merges
+      # (Opcional recomendado) Falha se o repo permitir squash/rebase merge
       - name: Enforce repository merge settings (no squash/rebase)
+        if: steps.guard.outputs.run == 'true'
         run: |
           set -euo pipefail
           json=$(curl -sS -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" "$API_URL/repos/$REPO")
           allow_squash=$(echo "$json" | jq -r '.allow_squash_merge')
           allow_rebase=$(echo "$json" | jq -r '.allow_rebase_merge')
           if [ "$allow_squash" = "true" ] || [ "$allow_rebase" = "true" ]; then
-            echo "::error title=Repository allows squash/rebase merges::Desabilite squash e rebase merges nas configurações do repositório para reforçar a política de 'merge commit only'."
+            echo "::error title=Repository allows squash/rebase merges::Desabilite squash e rebase merges nas configurações do repositório."
             exit 1
           fi
 
       - name: List commits in this PR (non-merge)
+        if: steps.guard.outputs.run == 'true'
         id: list
         run: |
           set -euo pipefail
-          echo "Base: origin/${BASE_REF}"
-          echo "Head: ${HEAD_SHA}"
-          # Lista os commits (não-merge) que entrariam na main via este PR
           COMMITS=$(git rev-list --no-merges --reverse "origin/${BASE_REF}..${HEAD_SHA}" || true)
           if [ -z "$COMMITS" ]; then
-            echo "No commits found between base and head (nothing to check)."
+            echo "Sem commits não-merge entre base e head."
             echo "commits=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -69,7 +81,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Validate each PR commit exists in mega
-        if: steps.list.outputs.commits != ''
+        if: steps.guard.outputs.run == 'true' && steps.list.outputs.commits != ''
         run: |
           set -euo pipefail
           missing=0
@@ -81,13 +93,8 @@ jobs:
               missing=1
             fi
           done < /tmp/pr_commits.txt
-          if [ "$missing" -ne 0 ]; then
-            echo "Um ou mais commits do PR não estão em origin/${MEGA_BRANCH}."
-            echo "Ajuste o fluxo: faça merge da feature em ${MEGA_BRANCH} usando *merge commit* (sem squash/rebase), aguarde QA, e só então abra o PR para main."
-            exit 1
-          fi
+          test $missing -eq 0
 
-      - name: Summary
-        if: steps.list.outputs.commits == '' || success()
-        run: |
-          echo "Todos os commits deste PR já estão presentes em origin/${MEGA_BRANCH}. ✔️"
+      - name: Pass-through for non-feature PRs
+        if: steps.guard.outputs.run != 'true'
+        run: echo "Check liberado: PR não é feature/*."
