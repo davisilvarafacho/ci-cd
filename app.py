@@ -24,6 +24,11 @@ def sales():
     return "Sales Page2ssss"
 
 
+@app.route("/ui")
+def ui():
+    return "UI Page"
+
+
 @app.route("/products")
 def products():
     return "Products Page"
